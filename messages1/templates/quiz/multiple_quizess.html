@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Multiple Quiz App</title>
+
+    <!-- Bootstrap CSS -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+
+        body {
+
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+
+        }
+
+        .quiz-container {
+
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+        }
+
+        .quiz-title {
+
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #333;
+
+        }
+
+        .question-box {
+
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: 0.3s ease;
+
+        }
+
+        .question-box:hover {
+
+            transform: scale(1.01);
+
+        }
+
+        .question {
+
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+
+        }
+
+        .form-check {
+
+            margin-bottom: 10px;
+
+        }
+
+        .submit-btn {
+
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 10px;
+
+        }
+
+        .result-box {
+
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease;
+
+        }
+
+        .correct {
+
+            background: #d4edda;
+            border: 1px solid #28a745;
+
+        }
+
+        .wrong {
+
+            background: #f8d7da;
+            border: 1px solid #dc3545;
+
+        }
+
+        .score-text {
+
+            font-size: 24px;
+            font-weight: bold;
+
+        }
+
+        .action-btn {
+
+            min-width: 170px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+
+        }
+
+        @keyframes fadeIn {
+
+            from {
+
+                opacity: 0;
+                transform: translateY(10px);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: translateY(0);
+
+            }
+
+        }
+
+        @media(max-width: 768px) {
+
+            .quiz-container {
+
+                padding: 20px;
+
+            }
+
+            .question {
+
+                font-size: 16px;
+
+            }
+
+            .score-text {
+
+                font-size: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="quiz-container">
+
+    <h1 class="quiz-title">
+        🎯 Multiple Quiz App
+    </h1>
+
+    <!-- Quiz Form -->
+
+    <form id="quizForm">
+
+        <!-- Question 1 -->
+
+        <div class="question-box">
+
+            <div class="question">
+                1. What does HTML stand for?
+            </div>
+
+            <div class="form-check">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="q1"
+                       value="a">
+
+                <label class="form-check-label">
+                    Hyper Text Markup Language
+                </label>
+
+            </div>
+
+            <div class="form-check">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="q1"
+                       value="b">
+
+                <label class="form-check-label">
+                    Home Tool Markup Language
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- Question 2 -->
+
+        <div class="question-box">
+
+            <div class="question">
+                2. Which language is used for styling web pages?
+            </div>
+
+            <div class="form-check">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="q2"
+                       value="a">
+
+                <label class="form-check-label">
+                    HTML
+                </label>
+
+            </div>
+
+            <div class="form-check">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="q2"
+                       value="b">
+
+                <label class="form-check-label">
+                    CSS
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- Question 3 -->
+
+        <div class="question-box">
+
+            <div class="question">
+                3. Which language is used for web page functionality?
+            </div>
+
+            <div class="form-check">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="q3"
+                       value="a">
+
+                <label class="form-check-label">
+                    JavaScript
+                </label>
+
+            </div>
+
+            <div class="form-check">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="q3"
+                       value="b">
+
+                <label class="form-check-label">
+                    Python
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- Question 4 -->
+
+        <div class="question-box">
+
+            <div class="question">
+                4. Which company developed JavaScript?
+            </div>
+
+            <div class="form-check">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="q4"
+                       value="a">
+
+                <label class="form-check-label">
+                    Netscape
+                </label>
+
+            </div>
+
+            <div class="form-check">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="q4"
+                       value="b">
+
+                <label class="form-check-label">
+                    Microsoft
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- Submit Button -->
+
+        <button type="button"
+                class="btn btn-primary submit-btn"
+                onclick="checkAnswers()">
+
+            Submit Quiz
+
+        </button>
+
+    </form>
+
+    <!-- Result Section -->
+
+    <div id="resultBox" class="result-box">
+
+        <div class="score-text" id="scoreText"></div>
+
+        <!-- Buttons -->
+
+        <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
+
+            <!-- Retry -->
+
+            <button class="btn btn-success action-btn"
+                    onclick="retryQuiz()">
+
+                🔄 Retry Quiz
+
+            </button>
+
+            <!-- Go Back -->
+
+            <button class="btn btn-outline-dark action-btn"
+                    onclick="goBackPage()">
+
+                ⬅ Go Back
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JavaScript -->
+
+<script>
+
+    function checkAnswers() {
+
+        let answers = {
+
+            q1: "a",
+            q2: "b",
+            q3: "a",
+            q4: "a"
+
+        };
+
+        let score = 0;
+
+        let totalQuestions = Object.keys(answers).length;
+
+        for (let question in answers) {
+
+            let selected = document.querySelector(
+                'input[name="' + question + '"]:checked'
+            );
+
+            if (selected && selected.value === answers[question]) {
+
+                score++;
+
+            }
+
+        }
+
+        let resultBox = document.getElementById("resultBox");
+
+        let scoreText = document.getElementById("scoreText");
+
+        resultBox.style.display = "block";
+
+        scoreText.innerHTML =
+            "✅ You scored " + score + " out of " + totalQuestions;
+
+        if (score >= 3) {
+
+            resultBox.className = "result-box correct";
+
+        }
+
+        else {
+
+            resultBox.className = "result-box wrong";
+
+        }
+
+        // Smooth Scroll
+
+        resultBox.scrollIntoView({
+
+            behavior: "smooth"
+
+        });
+
+    }
+
+    // Retry Quiz
+
+    function retryQuiz() {
+
+        document.getElementById("quizForm").reset();
+
+        let resultBox = document.getElementById("resultBox");
+
+        resultBox.style.display = "none";
+
+        window.scrollTo({
+
+            top: 0,
+            behavior: "smooth"
+
+        });
+
+    }
+
+    // Go Back
+
+    function goBackPage() {
+
+        window.history.back();
+
+    }
+
+</script>
+
+</body>
+
+</html>

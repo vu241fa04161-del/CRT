@@ -1,0 +1,156 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+
+<style>
+    .page-title {
+        font-size: 2.6rem;
+        font-weight: 800;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .quiz-container {
+        max-width: 800px;
+        margin: 40px auto;
+    }
+
+    /* Glass Quiz Card */
+    .quiz-card {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 20px;
+        padding: 35px;
+        margin-bottom: 25px;
+        box-shadow: var(--glass-shadow);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        text-align: center;
+        animation: slideUp 0.7s ease;
+    }
+
+    .quiz-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 12px 30px rgba(168, 85, 247, 0.15);
+    }
+
+    .quiz-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 12px;
+    }
+
+    .quiz-description {
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+
+    .quiz-time {
+        font-weight: 600;
+        color: #60a5fa;
+        margin-bottom: 25px;
+        font-size: 1.05rem;
+    }
+
+    .btn-start {
+        display: inline-block;
+        min-width: 180px;
+    }
+
+    .empty-message {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        padding: 50px;
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px dashed rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="quiz-container">
+
+    <h2 class="page-title" id="greetingTitle">
+        📚 Available Quizzes
+    </h2>
+
+    {% for quiz in quizzes %}
+
+    <div class="quiz-card">
+
+        <h4 class="quiz-title">
+            {{ quiz.title }}
+        </h4>
+
+        <p class="quiz-description">
+            {{ quiz.description }}
+        </p>
+
+        <p class="quiz-time">
+            ⏳ Time Limit: {{ quiz.time_limit }} minutes
+        </p>
+
+        <a href="/quiz/{{ quiz.id }}/" class="btn btn-primary btn-start">
+            🚀 Start Quiz
+        </a>
+
+    </div>
+
+    {% empty %}
+
+    <div class="empty-message">
+        No quizzes available right now 😔
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<script>
+    // Start Quiz Button Loading Trigger
+    const buttons = document.querySelectorAll(".btn-start");
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            button.innerHTML = "Loading Quiz... ⏳";
+            button.style.pointerEvents = "none";
+            button.style.opacity = "0.8";
+        });
+    });
+
+    // Dynamic Greeting Based on local hours
+    const title = document.getElementById("greetingTitle");
+    const hour = new Date().getHours();
+
+    if (hour < 12) {
+        title.innerHTML = "☀️ Morning Quizzes";
+    }
+    else if (hour < 18) {
+        title.innerHTML = "🌤️ Afternoon Quizzes";
+    }
+    else {
+        title.innerHTML = "🌙 Evening Quizzes";
+    }
+</script>
+
+{% endblock %}

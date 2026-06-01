@@ -1,0 +1,231 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+
+<style>
+
+body{
+    background: #f4f7fc;
+    font-family: Arial, sans-serif;
+}
+
+.quiz-container{
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+.quiz-title{
+    text-align: center;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 25px;
+}
+
+.timer-box{
+    background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 100px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.question-card{
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.question-card:hover{
+    transform: translateY(-3px);
+}
+
+.card-body{
+    padding: 25px;
+}
+
+.question-title{
+    font-size: 20px;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 20px;
+}
+
+.option{
+    background: #f8f9fa;
+    border: 2px solid transparent;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.option:hover{
+    background: #eaf2ff;
+    border-color: #007bff;
+}
+
+.option input{
+    margin-right: 10px;
+}
+
+.option.selected{
+    background: #dbeafe;
+    border-color: #2563eb;
+}
+
+.submit-btn{
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    margin-top: 25px;
+    transition: 0.3s;
+}
+
+.submit-btn:hover{
+    transform: scale(1.02);
+}
+
+</style>
+
+<div class="quiz-container">
+
+    <h2 class="quiz-title">{{ quiz.title }}</h2>
+
+    <div class="timer-box">
+        ⏳ Time Left: <span id="timer"></span>
+    </div>
+
+    <form method="POST" id="quizForm">
+        {% csrf_token %}
+
+        {% for question in questions %}
+
+        <div class="card mt-4 question-card">
+            <div class="card-body">
+
+                <h5 class="question-title">
+                    {{ forloop.counter }}.
+                    {{ question.question_text }}
+                </h5>
+
+                <label class="option">
+                    <input type="radio"
+                           name="{{ question.id }}"
+                           value="1">
+                    {{ question.option1 }}
+                </label>
+
+                <label class="option">
+                    <input type="radio"
+                           name="{{ question.id }}"
+                           value="2">
+                    {{ question.option2 }}
+                </label>
+
+                <label class="option">
+                    <input type="radio"
+                           name="{{ question.id }}"
+                           value="3">
+                    {{ question.option3 }}
+                </label>
+
+                <label class="option">
+                    <input type="radio"
+                           name="{{ question.id }}"
+                           value="4">
+                    {{ question.option4 }}
+                </label>
+
+            </div>
+        </div>
+
+        {% endfor %}
+
+        <button type="submit"
+                class="btn btn-success submit-btn">
+            Submit Quiz
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+
+let time = {{ quiz.time_limit }} * 60;
+
+function updateTimer() {
+
+    let minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+
+    document.getElementById('timer').innerHTML =
+        minutes + ':' + seconds;
+
+    // Timer color warning
+    const timerBox = document.querySelector('.timer-box');
+
+    if(time <= 60){
+        timerBox.style.background =
+            'linear-gradient(135deg, #ff0000, #990000)';
+    }
+
+    // Auto submit
+    if (time <= 0) {
+        clearInterval(timerInterval);
+        alert("Time is up! Quiz will be submitted.");
+        document.getElementById('quizForm').submit();
+    }
+
+    time--;
+}
+
+updateTimer();
+
+let timerInterval = setInterval(updateTimer, 1000);
+
+
+// Highlight selected option
+const options = document.querySelectorAll('.option');
+
+options.forEach(option => {
+
+    option.addEventListener('click', () => {
+
+        const parent = option.parentElement;
+
+        parent.querySelectorAll('.option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+
+        option.classList.add('selected');
+
+    });
+
+});
+
+
+// Confirmation before submit
+document.getElementById('quizForm').addEventListener('submit', function(e){
+
+    const confirmSubmit = confirm("Are you sure you want to submit the quiz?");
+
+    if(!confirmSubmit){
+        e.preventDefault();
+    }
+
+});
+
+</script>
+
+{% endblock %}

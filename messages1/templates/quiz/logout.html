@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Logout Page</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+    }
+
+    .logout-btn {
+      padding: 12px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ff4d4d;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .logout-btn:hover {
+      background-color: #cc0000;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="logout-btn" onclick="logout()">
+    Logout
+  </button>
+
+  <script>
+    function logout() {
+      // Clear login data if stored
+      localStorage.clear();
+      sessionStorage.clear();
+
+      // Redirect to home page
+      window.location.href = "/";
+    }
+  </script>
+
+</body>
+</html>

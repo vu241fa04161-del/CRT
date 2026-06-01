@@ -1,0 +1,167 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+
+<style>
+    .result-card {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 28px;
+        padding: 60px 40px;
+        box-shadow: var(--glass-shadow);
+        text-align: center;
+        max-width: 600px;
+        margin: 40px auto;
+        animation: cardReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes cardReveal {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .celebration-emoji {
+        font-size: 80px;
+        display: inline-block;
+        animation: floatEmoji 3s ease-in-out infinite alternate;
+        margin-bottom: 25px;
+    }
+
+    @keyframes floatEmoji {
+        0% { transform: translateY(0) rotate(-5deg); }
+        100% { transform: translateY(-8px) rotate(5deg); }
+    }
+
+    .result-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 10px;
+    }
+
+    .quiz-subject {
+        color: #60a5fa;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 35px;
+    }
+
+    /* Radial Circular Progress */
+    .progress-circle {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: conic-gradient(#a855f7 0% {{ percentage }}%, rgba(255,255,255,0.06) {{ percentage }}% 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 35px;
+        box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
+    }
+
+    .progress-circle::after {
+        content: '';
+        position: absolute;
+        width: 146px;
+        height: 146px;
+        border-radius: 50%;
+        background: #0f1426; /* Match dark deep body theme */
+    }
+
+    .progress-content {
+        position: relative;
+        z-index: 5;
+    }
+
+    .percentage-text {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #0b0b0b;
+        line-height: 1;
+    }
+
+    .score-badge {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin-top: 5px;
+    }
+
+    /* Score Feedback messages */
+    .score-feedback {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 30px;
+    }
+
+    .action-btn-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .action-btn-group a {
+        min-width: 180px;
+    }
+</style>
+
+<div class="result-card">
+
+    <!-- Celebration Icon -->
+    <div class="celebration-emoji">
+        {% if percentage >= 80 %}
+            🏆
+        {% elif percentage >= 50 %}
+            🎉
+        {% else %}
+            💪
+        {% endif %}
+    </div>
+
+    <!-- Title -->
+    <h2 class="result-title">Quiz Completed!</h2>
+    <div class="quiz-subject">Subject: {{ quiz.title }}</div>
+
+    <!-- Circular Progress bar -->
+    <div class="progress-circle">
+        <div class="progress-content">
+            <div class="percentage-text">{{ percentage }}%</div>
+            <div class="score-badge">Score: {{ score }}/{{ total }}</div>
+        </div>
+    </div>
+
+    <!-- Grading Feedback Messages -->
+    <div class="score-feedback">
+        {% if percentage >= 80 %}
+            🌟 Outstanding Performance! You are a master! 🌟
+        {% elif percentage >= 50 %}
+            👍 Good Job! Solid effort, keep it up! 👍
+        {% else %}
+            💪 Keep Practicing! Consistency leads to mastery! 💪
+        {% endif %}
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-btn-group">
+        <a href="/quizess/" class="btn btn-primary">
+            📘 Explore Quizzes
+        </a>
+        <a href="/resulthistory/" class="btn btn-warning">
+            📊 View History
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

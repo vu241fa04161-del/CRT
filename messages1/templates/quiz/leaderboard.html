@@ -1,0 +1,287 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+
+<style>
+    .leaderboard-card {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: var(--glass-shadow);
+        animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .leaderboard-title {
+        font-size: 2.6rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 8px;
+        text-align: center;
+        background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .leaderboard-subtitle {
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+    }
+
+    /* Search Input */
+    .search-box {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto 30px;
+    }
+
+    /* Glass Competitive Table */
+    .glass-table {
+        background: transparent !important;
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        color: #0c0c0c !important;
+        overflow: hidden;
+        border-radius: 16px;
+    }
+
+    .glass-table thead {
+        background: rgba(255, 255, 255, 0.04) !important;
+    }
+
+    .glass-table th {
+        padding: 18px !important;
+        text-align: center !important;
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        color: #60a5fa !important;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+        border-top: none !important;
+    }
+
+    .glass-table td {
+        padding: 16px !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        font-size: 1rem !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        color:black, var(--text-secondary) !important;
+    }
+
+    .glass-table tbody tr {
+        background: transparent !important;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .glass-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.04) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* Custom shining rank badges */
+    .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #020202;
+    }
+
+    .gold-badge {
+        background: linear-gradient(135deg, rgba(250, 204, 21, 0.25), rgba(234, 179, 8, 0.25));
+        border: 1.5px solid rgba(250, 204, 21, 0.6);
+        box-shadow: 0 0 12px rgba(250, 204, 21, 0.3);
+    }
+
+    .silver-badge {
+        background: linear-gradient(135deg, rgba(203, 213, 225, 0.25), rgba(148, 163, 184, 0.25));
+        border: 1.5px solid rgba(203, 213, 225, 0.6);
+        box-shadow: 0 0 12px rgba(203, 213, 225, 0.3);
+    }
+
+    .bronze-badge {
+        background: linear-gradient(135deg, rgba(251, 146, 60, 0.25), rgba(234, 88, 12, 0.25));
+        border: 1.5px solid rgba(251, 146, 60, 0.6);
+        box-shadow: 0 0 12px rgba(251, 146, 60, 0.3);
+    }
+
+    .normal-badge {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-secondary);
+    }
+
+    /* Glow highlights for top leaders */
+    .leader-row-1 {
+        background: linear-gradient(90deg, rgba(250, 204, 21, 0.08), rgba(234, 179, 8, 0.02)) !important;
+        border-left: 4px solid #eab308 !important;
+    }
+
+    .leader-row-1 td {
+        color: #100f0f !important;
+        font-weight: 700 !important;
+    }
+
+    .score-pill {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+        display: inline-block;
+    }
+
+    .no-result {
+        text-align: center;
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        display: none;
+        margin-top: 30px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 16px;
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+</style>
+
+<div class="container py-4">
+
+    <h2 class="leaderboard-title">🏆 Score Leaderboard</h2>
+    <p class="leaderboard-subtitle">Celebrate the high achievers of the QuizPortal community across all technical assessments.</p>
+
+    <div class="leaderboard-card">
+        <!-- Search Option -->
+        <div class="search-box">
+            <input type="text"
+                   id="searchInput"
+                   class="form-control"
+                   placeholder="🔍 Search rankings by student or quiz name...">
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table glass-table" id="leaderboardTable">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Student Name</th>
+                        <th>Quiz Subject</th>
+                        <th>Obtained Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr class="{% if forloop.counter == 1 %}leader-row-1{% endif %}">
+                        <!-- RankBadge -->
+                        <td>
+                            {% if forloop.counter == 1 %}
+                                <span class="rank-badge gold-badge">🥇</span>
+                            {% elif forloop.counter == 2 %}
+                                <span class="rank-badge silver-badge">🥈</span>
+                            {% elif forloop.counter == 3 %}
+                                <span class="rank-badge bronze-badge">🥉</span>
+                            {% else %}
+                                <span class="rank-badge normal-badge">{{ forloop.counter }}</span>
+                            {% endif %}
+                        </td>
+                        <!-- Student User -->
+                        <td>
+                            {{ result.student.username }}
+                        </td>
+                        <!-- Quiz Subject -->
+                        <td>
+                            {{ result.quiz.title }}
+                        </td>
+                        <!-- Obtained Score -->
+                        <td>
+                            <span class="score-pill">
+                                {{ result.score }}/{{ result.total }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="py-4 text-center text-muted">
+                            😔 No leaderboard scores submitted yet. Be the first!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="no-result" id="noResult">
+            ❌ No matching rankings or scores found
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Script -->
+<script>
+    // Search Functionality
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('leaderboardTable');
+    const rows = table.getElementsByTagName('tr');
+    const noResult = document.getElementById('noResult');
+
+    searchInput.addEventListener('keyup', function(){
+        let filter = searchInput.value.toLowerCase();
+        let visibleCount = 0;
+        let totalRows = 0;
+
+        for(let i = 1; i < rows.length; i++){
+            let student = rows[i].getElementsByTagName('td')[1];
+            let quiz = rows[i].getElementsByTagName('td')[2];
+
+            if(student && quiz){
+                totalRows++;
+                let studentText = student.textContent.toLowerCase();
+                let quizText = quiz.textContent.toLowerCase();
+
+                if(studentText.indexOf(filter) > -1 || quizText.indexOf(filter) > -1){
+                    rows[i].style.display = "";
+                    visibleCount++;
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+
+        if(totalRows > 0) {
+            if(visibleCount === 0){
+                noResult.style.display = "block";
+                table.style.display = "none";
+            } else {
+                noResult.style.display = "none";
+                table.style.display = "table";
+            }
+        }
+    });
+
+    // Row Sequential Animations
+    const bodyRows = document.querySelectorAll('#leaderboardTable tbody tr');
+    bodyRows.forEach((row, index) => {
+        row.style.opacity = "0";
+        row.style.transform = "translateY(20px)";
+        setTimeout(() => {
+            row.style.transition = "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)";
+            row.style.opacity = "1";
+            row.style.transform = "translateY(0)";
+        }, index * 80);
+    });
+</script>
+
+{% endblock %}

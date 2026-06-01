@@ -1,0 +1,334 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+
+<style>
+    .quiz-title-card {
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(168, 85, 247, 0.1));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .quiz-header-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .quiz-meta-badge {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-weight: 600;
+        color: #60a5fa;
+        font-size: 0.95rem;
+    }
+
+    /* Floating Timer */
+    .timer-container {
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        padding: 15px 25px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px 0 rgba(239, 68, 68, 0.2);
+        z-index: 1000;
+        text-align: center;
+        animation: floatTimer 2s ease-in-out infinite alternate;
+        transition: all 0.3s ease;
+    }
+
+    @keyframes floatTimer {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-4px); }
+    }
+
+    .timer-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #f87171;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .timer-display {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #ef4444;
+        font-family: monospace;
+    }
+
+    /* Glass Question Card */
+    .question-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .question-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    }
+
+    .question-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+
+    /* Styled Radio Option Box */
+    .option-container {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 14px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+
+    .option-container:hover {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(96, 165, 250, 0.4);
+        transform: translateX(4px);
+    }
+
+    /* Styled Radio inputs */
+    .option-radio {
+        appearance: none;
+        width: 22px;
+        height: 22px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        margin-right: 15px;
+        outline: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        background: transparent;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .option-radio:checked {
+        border-color: #60a5fa;
+        background: rgba(96, 165, 250, 0.1);
+    }
+
+    .option-radio:checked::after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        background: #60a5fa;
+        border-radius: 50%;
+        display: block;
+    }
+
+    .option-label {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        font-weight: 500;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .option-container:hover .option-label {
+        color: #ffffff;
+    }
+
+    .submit-quiz-btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2rem;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    @media (max-width: 992px) {
+        .timer-container {
+            position: sticky;
+            top: 20px;
+            right: 0;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            animation: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .timer-label {
+            margin-bottom: 0;
+        }
+        .timer-display {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<!-- Floating Glass Countdown Timer -->
+<div class="timer-container" id="timerBox">
+    <div>
+        <div class="timer-label">⏱️ Time Remaining</div>
+        <div class="timer-display" id="timeDisplay">00:00</div>
+    </div>
+</div>
+
+<div class="container py-4">
+
+    <!-- Quiz Title Banner -->
+    <div class="quiz-title-card">
+        <div class="quiz-header-info">
+            <div>
+                <h1 class="fw-bold text-white mb-2">{{ quiz.title }}</h1>
+                <p class="text-secondary mb-0 fs-5">{{ quiz.description }}</p>
+            </div>
+            <div class="d-flex gap-2">
+                <span class="quiz-meta-badge">⏱️ Limit: {{ quiz.time_limit }} Min</span>
+                <span class="quiz-meta-badge">📋 Questions: {{ questions.count }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Form -->
+    <form method="POST" id="quizForm">
+        {% csrf_token %}
+
+        {% for question in questions %}
+        <div class="question-card">
+            <!-- Question Text -->
+            <h5 class="question-text">
+                <span class="text-primary me-2">Q{{ forloop.counter }}.</span>
+                {{ question.question }}
+            </h5>
+
+            <!-- Options -->
+            <div class="options-wrapper">
+                <!-- Option 1 -->
+                <div class="option-container" onclick="selectRadio('q_{{ question.id }}_1')">
+                    <input type="radio"
+                           id="q_{{ question.id }}_1"
+                           class="option-radio"
+                           name="{{ question.id }}"
+                           value="{{ question.option1 }}"
+                           required>
+                    <span class="option-label">{{ question.option1 }}</span>
+                </div>
+
+                <!-- Option 2 -->
+                <div class="option-container" onclick="selectRadio('q_{{ question.id }}_2')">
+                    <input type="radio"
+                           id="q_{{ question.id }}_2"
+                           class="option-radio"
+                           name="{{ question.id }}"
+                           value="{{ question.option2 }}">
+                    <span class="option-label">{{ question.option2 }}</span>
+                </div>
+
+                <!-- Option 3 -->
+                <div class="option-container" onclick="selectRadio('q_{{ question.id }}_3')">
+                    <input type="radio"
+                           id="q_{{ question.id }}_3"
+                           class="option-radio"
+                           name="{{ question.id }}"
+                           value="{{ question.option3 }}">
+                    <span class="option-label">{{ question.option3 }}</span>
+                </div>
+
+                <!-- Option 4 -->
+                <div class="option-container" onclick="selectRadio('q_{{ question.id }}_4')">
+                    <input type="radio"
+                           id="q_{{ question.id }}_4"
+                           class="option-radio"
+                           name="{{ question.id }}"
+                           value="{{ question.option4 }}">
+                    <span class="option-label">{{ question.option4 }}</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Submit Button -->
+        <button class="btn btn-success submit-quiz-btn" type="submit">
+            ✅ Submit My Quiz Answers
+        </button>
+    </form>
+
+</div>
+
+<!-- Countdown Timer and Helper Script -->
+<script>
+    // Radio Helper to allow clicking anywhere in option card
+    function selectRadio(id) {
+        const input = document.getElementById(id);
+        if (input) {
+            input.checked = true;
+        }
+    }
+
+    // Countdown Timer logic
+    const timeLimitMinutes = parseInt("{{ quiz.time_limit }}") || 20;
+    let timeRemainingSeconds = timeLimitMinutes * 60;
+
+    const displayElement = document.getElementById("timeDisplay");
+    const formElement = document.getElementById("quizForm");
+
+    function startTimer() {
+        const timerInterval = setInterval(() => {
+            const minutes = Math.floor(timeRemainingSeconds / 60);
+            const seconds = timeRemainingSeconds % 60;
+
+            // Formatted string
+            const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+            const formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+
+            displayElement.innerText = formattedMinutes + ":" + formattedSeconds;
+
+            // Warning visual triggers when time is low (< 1 min)
+            if (timeRemainingSeconds <= 60) {
+                document.getElementById("timerBox").style.borderColor = "#ef4444";
+                document.getElementById("timerBox").style.boxShadow = "0 8px 32px 0 rgba(239, 68, 68, 0.4)";
+                displayElement.style.color = "#ff3333";
+            }
+
+            if (timeRemainingSeconds <= 0) {
+                clearInterval(timerInterval);
+                alert("⏰ Time is up! Your answers are being submitted automatically.");
+                
+                // Submit Form
+                formElement.submit();
+            }
+
+            timeRemainingSeconds--;
+        }, 1000);
+    }
+
+    // Run timer on start
+    window.addEventListener("DOMContentLoaded", () => {
+        startTimer();
+    });
+</script>
+
+{% endblock %}
