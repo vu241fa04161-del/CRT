@@ -9,4 +9,4 @@ run python manage.py collectstatic --noinput
 
 EXPOSE 10000
 
-CMD ["gunicorn","CRT.wsgi:application","--bind","0.0.0.0:10000"]
+CMD ["gunicorn","onlinequiz.wsgi:application","--bind","0.0.0.0:10000"]
