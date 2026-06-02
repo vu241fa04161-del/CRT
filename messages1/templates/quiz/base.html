@@ -378,41 +378,55 @@
             <!-- Left Menu -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
+                    <a class="nav-link" href="/" data-translate="home">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/quizess/">Quizzes</a>
+                    <a class="nav-link" href="/quizess/" data-translate="quizzes">Quizzes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/leaderboard/">Leaderboard</a>
+                    <a class="nav-link" href="/leaderboard/" data-translate="leaderboard">Leaderboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/multiple_quizess/">Static Quiz</a>
+                    <a class="nav-link" href="/multiple_quizess/" data-translate="static_quiz">Static Quiz</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/">Dashboard</a>
+                    <a class="nav-link" href="/dashboard/" data-translate="dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/resulthistory/">History</a>
+                    <a class="nav-link" href="/resulthistory/" data-translate="history">History</a>
                 </li>
                 {% endif %}
             </ul>
 
             <!-- Right Side Buttons -->
             <div class="d-flex gap-2">
+                <!-- Language Selector Dropdown -->
+                <div class="dropdown me-2">
+                    <button class="btn btn-outline-secondary dropdown-toggle text-white d-flex align-items-center gap-1" type="button" id="languageSelectorBtn" data-bs-toggle="dropdown" aria-expanded="false" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">
+                        🌐 <span id="currentLangLabel">English</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="languageSelectorBtn" style="background: rgba(15,23,42,0.95); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);">
+                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">🇺🇸 English</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('es')">🇪🇸 Español</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('hi')">🇮🇳 हिन्दी</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('te')">🇮🇳 తెలుగు</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('de')">🇩🇪 Deutsch</a></li>
+                    </ul>
+                </div>
+
                 {% if user.is_authenticated %}
-                    <span class="navbar-text me-2 d-none d-lg-inline-block text-secondary">
+                    <span class="navbar-text me-2 d-none d-lg-inline-block text-secondary" id="welcomeUserText">
                         Welcome, <strong>{{ user.username }}</strong>!
                     </span>
-                    <a href="/logout/" class="btn btn-danger">
+                    <a href="/logout/" class="btn btn-danger" data-translate="logout">
                         Logout
                     </a>
                 {% else %}
-                    <a href="/login/" class="btn btn-primary">
+                    <a href="/login/" class="btn btn-primary" data-translate="login">
                         Login
                     </a>
-                    <a href="/register/" class="btn btn-warning">
+                    <a href="/register/" class="btn btn-warning" data-translate="register">
                         Register
                     </a>
                 {% endif %}
@@ -490,6 +504,253 @@
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Global Translation System
+    const translations = {
+        en: {
+            "home": "Home",
+            "quizzes": "Quizzes",
+            "leaderboard": "Leaderboard",
+            "static_quiz": "Static Quiz",
+            "dashboard": "Dashboard",
+            "history": "History",
+            "logout": "Logout",
+            "login": "Login",
+            "register": "Register",
+            "welcome": "Welcome",
+            "lang_label": "English",
+            
+            // AI Guide
+            "ai_title": "🤖 AI Mentor & Guide",
+            "ai_subtitle": "Here is your proctor guidance for a successful exam:",
+            "ai_dos": "✅ What to DO:",
+            "ai_do1": "Read each question carefully before choosing an answer.",
+            "ai_do2": "Keep an eye on the floating countdown timer.",
+            "ai_do3": "Attempt all questions; there is no negative marking.",
+            "ai_donts": "❌ What NOT to DO:",
+            "ai_dont1": "Do not refresh the page, or your progress will be lost.",
+            "ai_dont2": "Do not switch tabs or minimize the browser window.",
+            "ai_dont3": "Do not search for answers online.",
+            "ai_button": "💡 Ask AI for Advice",
+            
+            // Quiz Details Page
+            "limit_label": "⏱️ Limit",
+            "questions_label": "📋 Questions",
+            "submit_btn": "✅ Submit My Quiz Answers",
+            "time_remaining": "⏱️ Time Remaining",
+            "min": "Min"
+        },
+        es: {
+            "home": "Inicio",
+            "quizzes": "Cuestionarios",
+            "leaderboard": "Clasificación",
+            "static_quiz": "Cuestionario Estático",
+            "dashboard": "Panel de Control",
+            "history": "Historial",
+            "logout": "Cerrar sesión",
+            "login": "Iniciar sesión",
+            "register": "Registrarse",
+            "welcome": "Bienvenido",
+            "lang_label": "Español",
+            
+            "ai_title": "🤖 Mentor e Instructor de IA",
+            "ai_subtitle": "Aquí tienes orientación para un examen exitoso:",
+            "ai_dos": "✅ Lo que debes HACER:",
+            "ai_do1": "Lee cada pregunta detenidamente antes de responder.",
+            "ai_do2": "Vigila el temporizador flotante en pantalla.",
+            "ai_do3": "Responde todas las preguntas; no hay puntos negativos.",
+            "ai_donts": "❌ Lo que NO debes HACER:",
+            "ai_dont1": "No recargues la página, perderás tu progreso.",
+            "ai_dont2": "No cambies de pestaña ni minimices el navegador.",
+            "ai_dont3": "No busques las respuestas en internet.",
+            "ai_button": "💡 Pedir consejo al Mentor IA",
+            
+            "limit_label": "⏱️ Límite",
+            "questions_label": "📋 Preguntas",
+            "submit_btn": "✅ Enviar mis respuestas",
+            "time_remaining": "⏱️ Tiempo restante",
+            "min": "Min"
+        },
+        hi: {
+            "home": "होम",
+            "quizzes": "क्विज़",
+            "leaderboard": "लीडरबोर्ड",
+            "static_quiz": "स्टेटिक क्विज़",
+            "dashboard": "डैशबोर्ड",
+            "history": "इतिहास",
+            "logout": "लॉगआउट",
+            "login": "लॉगिन",
+            "register": "रजिस्टर",
+            "welcome": "स्वागत है",
+            "lang_label": "हिन्दी",
+            
+            "ai_title": "🤖 एआई मार्गदर्शक और शिक्षक",
+            "ai_subtitle": "सफल परीक्षा के लिए यहां आपके निर्देश दिए गए हैं:",
+            "ai_dos": "✅ क्या करें (Dos):",
+            "ai_do1": "उत्तर चुनने से पहले प्रत्येक प्रश्न को ध्यान से पढ़ें।",
+            "ai_do2": "स्क्रीन पर तैरते हुए काउंटडाउन टाइमर पर नज़र रखें।",
+            "ai_do3": "सभी प्रश्नों का प्रयास करें; कोई नकारात्मक अंकन नहीं है।",
+            "ai_donts": "❌ क्या न करें (Don'ts):",
+            "ai_dont1": "पेज को रीफ्रेश न करें, अन्यथा आपकी प्रगति खो जाएगी।",
+            "ai_dont2": "टैब न बदलें और ब्राउज़र विंडो को मिनिमाइज़ न करें।",
+            "ai_dont3": "इंटरनेट पर उत्तर न खोजें।",
+            "ai_button": "💡 एआई शिक्षक से सलाह लें",
+            
+            "limit_label": "⏱️ सीमा",
+            "questions_label": "📋 प्रश्न",
+            "submit_btn": "✅ उत्तर सबमिट करें",
+            "time_remaining": "⏱️ बचा हुआ समय",
+            "min": "मिनट"
+        },
+        te: {
+            "home": "హోమ్",
+            "quizzes": "క్విజ్‌లు",
+            "leaderboard": "లీడర్‌బోర్డ్",
+            "static_quiz": "స్టాటిక్ క్విజ్",
+            "dashboard": "డాష్‌బోర్డ్",
+            "history": "చరిత్ర",
+            "logout": "లాగౌట్",
+            "login": "లాగిన్",
+            "register": "రిజిస్టర్",
+            "welcome": "స్వాగతం",
+            "lang_label": "తెలుగు",
+            
+            "ai_title": "🤖 AI మెంటార్ & గైడ్",
+            "ai_subtitle": "పరీక్షలో విజయం సాధించడానికి ఇక్కడ కొన్ని మార్గదర్శకాలు ఉన్నాయి:",
+            "ai_dos": "✅ చేయవలసినవి (Dos):",
+            "ai_do1": "సమాధానాన్ని ఎంచుకునే ముందు ప్రతి ప్రశ్నను జాగ్రత్తగా చదవండి.",
+            "ai_do2": "కౌంట్‌డౌన్ టైమర్‌ను గమనిస్తూ ఉండండి.",
+            "ai_do3": "అన్ని ప్రశ్నలకు సమాధానం ఇవ్వండి; నెగటివ్ మార్కులు లేవు.",
+            "ai_donts": "❌ చేయకూడనివి (Don'ts):",
+            "ai_dont1": "పేజీని రీఫ్రెష్ చేయవద్దు, అలా చేస్తే మీ సమాచారం పోతుంది.",
+            "ai_dont2": "ట్యాబ్‌లను మార్చవద్దు లేదా బ్రౌజర్‌ను మినిమైజ్ చేయవద్దు.",
+            "ai_dont3": "ఆన్‌లైన్‌లో సమాధానాల కోసం శోధించవద్దు.",
+            "ai_button": "💡 AI మెంటార్ సలహా అడగండి",
+            
+            "limit_label": "⏱️ పరిమితి",
+            "questions_label": "📋 ప్రశ్నలు",
+            "submit_btn": "✅ సమాధానాలను సమర్పించండి",
+            "time_remaining": "మిగిలిన సమయం",
+            "min": "నిమిషాలు"
+        },
+        de: {
+            "home": "Startseite",
+            "quizzes": "Quizze",
+            "leaderboard": "Bestenliste",
+            "static_quiz": "Statisches Quiz",
+            "dashboard": "Dashboard",
+            "history": "Verlauf",
+            "logout": "Abmelden",
+            "login": "Anmelden",
+            "register": "Registrieren",
+            "welcome": "Willkommen",
+            "lang_label": "Deutsch",
+            
+            "ai_title": "🤖 KI-Mentor & Leitfaden",
+            "ai_subtitle": "Hier sind Ihre Anweisungen für eine erfolgreiche Prüfung:",
+            "ai_dos": "✅ Was Sie TUN sollten:",
+            "ai_do1": "Lesen Sie jede Frage sorgfältig durch, bevor Sie eine Antwort wählen.",
+            "ai_do2": "Behalten Sie den ablaufenden Timer im Auge.",
+            "ai_do3": "Beantworten Sie alle Fragen; es gibt keinen Punktabzug bei Fehlern.",
+            "ai_donts": "❌ Was Sie NICHT TUN sollten:",
+            "ai_dont1": "Laden Sie die Seite nicht neu, da sonst Ihr Fortschritt verloren geht.",
+            "ai_dont2": "Wechseln Sie nicht den Tab und minimieren Sie nicht das Browserfenster.",
+            "ai_dont3": "Suchen Sie nicht im Internet nach den Antworten.",
+            "ai_button": "💡 KI-Mentor nach Rat fragen",
+            
+            "limit_label": "⏱️ Zeitlimit",
+            "questions_label": "📋 Fragen",
+            "submit_btn": "✅ Meine Antworten absenden",
+            "time_remaining": "⏱️ Verbleibende Zeit",
+            "min": "Min"
+        }
+    };
+
+    // Advice pools for dynamic proctor messaging
+    const advicePools = {
+        en: [
+            "You got this! Stay focused and trust your preparation.",
+            "Take a deep breath. Focus on one question at a time.",
+            "Read the code options carefully. Syntax errors are easy to spot if you pay attention!",
+            "Time management is key. If you get stuck, move on and come back later.",
+            "Integrity is the best policy. Solve it yourself to test your true skills!"
+        ],
+        es: [
+            "¡Tú puedes hacerlo! Mantén la concentración y confía en tu preparación.",
+            "Respira hondo. Concéntrate en una pregunta a la vez.",
+            "Lee las opciones de código con atención. ¡Los errores de sintaxis son fáciles de detectar si te fijas bien!",
+            "La gestión del tiempo es clave. Si te atascas, sigue adelante y vuelve más tarde.",
+            "La integridad es la mejor política. ¡Resuélvelo tú mismo para probar tus verdaderas habilidades!"
+        ],
+        hi: [
+            "आप यह कर सकते हैं! ध्यान केंद्रित रखें और अपनी तैयारी पर भरोसा रखें।",
+            "एक गहरी साँस लें। एक बार में एक ही प्रश्न पर ध्यान केंद्रित करें।",
+            "कोड विकल्पों को ध्यान से पढ़ें। यदि आप ध्यान देंगे तो सिंटैक्स त्रुटियों को पहचानना आसान है!",
+            "समय प्रबंधन महत्वपूर्ण है। यदि आप अटक जाते हैं, तो आगे बढ़ें और बाद में वापस आएं।",
+            "ईमानदारी सबसे अच्छी नीति है। अपने वास्तविक कौशल का परीक्षण करने के लिए इसे स्वयं हल करें!"
+        ],
+        te: [
+            "మీరు చేయగలరు! ఏకాగ్రతతో ఉండండి మరియు మీ ప్రిపరేషన్‌ను నమ్మండి.",
+            "దీర్ఘ శ్వాస తీసుకోండి. ఒకేసారి ఒక ప్రశ్నపై దృష్టి పెట్టండి.",
+            "కోడ్ ఆప్షన్‌లను జాగ్రత్తగా చదవండి. శ్రద్ధ పెడితే సింటాక్స్ లోపాలను సులభంగా గుర్తించవచ్చు!",
+            "సమయ పాలన ముఖ్యం. ఎక్కడైనా ఆగిపోతే, ముందుకు సాగి తర్వాత తిరిగి రండి.",
+            "నిజాయితీయే ఉత్తమ విధానం. మీ నిజమైన నైపుణ్యాలను పరీక్షించుకోవడానికి మీరే సమాధానం రాయండి!"
+        ],
+        de: [
+            "Sie schaffen das! Bleiben Sie konzentriert und vertrauen Sie Ihrer Vorbereitung.",
+            "Atmen Sie tief durch. Konzentrieren Sie sich auf eine Frage nach der anderen.",
+            "Lesen Sie die Code-Optionen sorgfältig durch. Syntaxfehler sind bei aufmerksamer Betrachtung leicht zu finden!",
+            "Zeitmanagement ist alles. Wenn Sie nicht weiterkommen, machen Sie weiter und kehren Sie später zurück.",
+            "Ehrlichkeit währt am längsten. Lösen Sie es selbst, um Ihr wahres Wissen zu testen!"
+        ]
+    };
+
+    // Change Language function
+    function changeLanguage(lang) {
+        localStorage.setItem("selectedLanguage", lang);
+        applyLanguage(lang);
+    }
+
+    // Apply Language function
+    function applyLanguage(lang) {
+        const dict = translations[lang] || translations.en;
+        
+        // Update data-translate elements
+        document.querySelectorAll("[data-translate]").forEach(el => {
+            const key = el.getAttribute("data-translate");
+            if (dict[key]) {
+                if (el.tagName === "INPUT" && el.type === "submit") {
+                    el.value = dict[key];
+                } else {
+                    el.innerHTML = dict[key];
+                }
+            }
+        });
+
+        // Update current language label in navbar
+        const currentLangLabel = document.getElementById("currentLangLabel");
+        if (currentLangLabel) {
+            currentLangLabel.innerText = dict["lang_label"] || "English";
+        }
+
+        // Custom updates for specific dynamic text if present
+        const welcomeUserEl = document.getElementById("welcomeUserText");
+        if (welcomeUserEl) {
+            welcomeUserEl.innerHTML = `${dict["welcome"]}, <strong>{{ user.username }}</strong>!`;
+        }
+        
+        // Trigger a custom event to notify child templates
+        const event = new CustomEvent("languageChanged", { detail: { lang: lang, dict: dict } });
+        document.dispatchEvent(event);
+    }
+
+    // On Load
+    window.addEventListener("DOMContentLoaded", () => {
+        const savedLang = localStorage.getItem("selectedLanguage") || "en";
+        applyLanguage(savedLang);
+    });
+</script>
 
 </body>
 </html>
