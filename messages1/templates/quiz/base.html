@@ -828,7 +828,11 @@
 </div>
 
 <!-- Bootstrap JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/boo    const translations = {
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Translation & Multilingual System -->
+<script>
+    const translations = {
         en: {
             "home": "Home",
             "quizzes": "Quizzes",
@@ -1011,46 +1015,6 @@
             "ai_widget_welcome": "🤖 <b>Beep Boop! Hallo Menschenfreund!</b>",
             "ai_widget_welcome_sub": "Ich bin dein KI-Roboter-Mentor und Öko-Berater. Frage mich, wie du Energie sparen, deinen digitalen CO2-Fußabdruck reduzieren oder mehr über die Quiz Portal-App erfahren kannst! (Hinweis: Es ist mir strengstens untersagt, Quiz-Antworten zu geben!)"
         }
-    };��‌లో సమాధానాల కోసం శోధించవద్దు.",
-            "ai_button": "💡 AI మెంటార్ సలహా అడగండి",
-            
-            "limit_label": "⏱️ పరిమితి",
-            "questions_label": "📋 ప్రశ్నలు",
-            "submit_btn": "✅ సమాధానాలను సమర్పించండి",
-            "time_remaining": "మిగిలిన సమయం",
-            "min": "నిమిషాలు"
-        },
-        de: {
-            "home": "Startseite",
-            "quizzes": "Quizze",
-            "leaderboard": "Bestenliste",
-            "static_quiz": "Statisches Quiz",
-            "dashboard": "Dashboard",
-            "history": "Verlauf",
-            "logout": "Abmelden",
-            "login": "Anmelden",
-            "register": "Registrieren",
-            "welcome": "Willkommen",
-            "lang_label": "Deutsch",
-            
-            "ai_title": "🤖 KI-Mentor & Leitfaden",
-            "ai_subtitle": "Hier sind Ihre Anweisungen für eine erfolgreiche Prüfung:",
-            "ai_dos": "✅ Was Sie TUN sollten:",
-            "ai_do1": "Lesen Sie jede Frage sorgfältig durch, bevor Sie eine Antwort wählen.",
-            "ai_do2": "Behalten Sie den ablaufenden Timer im Auge.",
-            "ai_do3": "Beantworten Sie alle Fragen; es gibt keinen Punktabzug bei Fehlern.",
-            "ai_donts": "❌ Was Sie NICHT TUN sollten:",
-            "ai_dont1": "Laden Sie die Seite nicht neu, da sonst Ihr Fortschritt verloren geht.",
-            "ai_dont2": "Wechseln Sie nicht den Tab und minimieren Sie nicht das Browserfenster.",
-            "ai_dont3": "Suchen Sie nicht im Internet nach den Antworten.",
-            "ai_button": "💡 KI-Mentor nach Rat fragen",
-            
-            "limit_label": "⏱️ Zeitlimit",
-            "questions_label": "📋 Fragen",
-            "submit_btn": "✅ Meine Antworten absenden",
-            "time_remaining": "⏱️ Verbleibende Zeit",
-            "min": "Min"
-        }
     };
 
     // Advice pools for dynamic proctor messaging
@@ -1129,6 +1093,102 @@
         // Trigger a custom event to notify child templates
         const event = new CustomEvent("languageChanged", { detail: { lang: lang, dict: dict } });
         document.dispatchEvent(event);
+    }
+
+    // Floating Glassmorphic AI Chatbot Widget Logic
+    function toggleAIChat() {
+        const chatWindow = document.getElementById("aiChatWindow");
+        if (chatWindow) {
+            chatWindow.classList.toggle("active");
+        }
+    }
+
+    function handleChatKeyPress(event) {
+        if (event.key === "Enter") {
+            sendChatMessage();
+        }
+    }
+
+    function sendQuickPrompt(promptText) {
+        const inputEl = document.getElementById("aiChatInput");
+        if (inputEl) {
+            inputEl.value = promptText;
+            sendChatMessage();
+        }
+    }
+
+    function appendMessage(sender, text) {
+        const bodyEl = document.getElementById("aiChatBody");
+        if (!bodyEl) return;
+
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "chat-message " + sender;
+        
+        // Basic markdown formatting
+        let formattedText = text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/•\s?(.*?)\n/g, '<li>$1</li>')
+            .replace(/\n/g, '<br>');
+        
+        msgDiv.innerHTML = formattedText;
+        bodyEl.appendChild(msgDiv);
+        bodyEl.scrollTop = bodyEl.scrollHeight;
+    }
+
+    function sendChatMessage() {
+        const inputEl = document.getElementById("aiChatInput");
+        if (!inputEl) return;
+
+        const text = inputEl.value.trim();
+        if (!text) return;
+
+        // Clear input
+        inputEl.value = "";
+
+        // Append User Message
+        appendMessage("user", text);
+
+        // Show typing indicator
+        const bodyEl = document.getElementById("aiChatBody");
+        const typingDiv = document.createElement("div");
+        typingDiv.className = "chat-message bot typing-indicator-container";
+        typingDiv.id = "chatTypingIndicator";
+        typingDiv.innerHTML = `
+            <div class="typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        `;
+        bodyEl.appendChild(typingDiv);
+        bodyEl.scrollTop = bodyEl.scrollHeight;
+
+        // AJAX Request to /ai-guidance/
+        fetch("/ai-guidance/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: text })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Remove typing indicator
+            const indicator = document.getElementById("chatTypingIndicator");
+            if (indicator) indicator.remove();
+
+            if (data.response) {
+                appendMessage("bot", data.response);
+            } else if (data.error) {
+                appendMessage("bot", "🤖 Beep Boop! An error occurred: " + data.error);
+            }
+        })
+        .catch(error => {
+            const indicator = document.getElementById("chatTypingIndicator");
+            if (indicator) indicator.remove();
+            appendMessage("bot", "🤖 Beep Boop! Connection failure! Please try again later.");
+        });
     }
 
     // On Load
