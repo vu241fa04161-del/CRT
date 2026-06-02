@@ -1,7 +1,12 @@
+import json
+import os
+import requests
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from .models import Quiz, Question, Result, Student
 
 
@@ -181,6 +186,110 @@ def quiz_detail(request, id):
             'questions': questions
         }
     )
+
+
+@csrf_exempt
+def ai_guidance(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST requests are allowed"}, status=400)
+    
+    try:
+        data = json.loads(request.body)
+        message = data.get("message", "").strip()
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    if not message:
+        return JsonResponse({"response": "🤖 Beep boop! Please say something!"})
+
+    # 1. Cheat check
+    cheat_keywords = [
+        "answer", "correct option", "solve this", "solution", "which is correct",
+        "give me the key", "correct answer", "solve question", "what is the option",
+        "cheat", "exam help", "tell me the answer of", "what is the answer"
+    ]
+    message_lower = message.lower()
+    if any(kw in message_lower for kw in cheat_keywords):
+        return JsonResponse({
+            "response": "🤖 **Beep Boop! Proctor Warning!**\n\nI am programmed to help you learn and adopt **eco-friendly habits**, as well as guide you about the features of this **Quiz Portal**!\n\n❌ **I am strictly forbidden from giving quiz answers or helping you cheat.** To test your real skills, please read the questions carefully and try to solve them on your own! You've got this! 🌟"
+        })
+
+    # 2. Check if Gemini API key exists
+    gemini_key = os.environ.get("GEMINI_API_KEY")
+    if gemini_key:
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}"
+            headers = {"Content-Type": "application/json"}
+            payload = {
+                "contents": [
+                    {
+                        "role": "user",
+                        "parts": [{"text": message}]
+                    }
+                ],
+                "systemInstruction": {
+                    "parts": [
+                        {
+                            "text": (
+                                "You are a friendly AI Robot Mentor and Eco-Advisor for our Quiz Portal app. "
+                                "Your goals are:\n"
+                                "1. Guide users on how to be eco-friendly. Focus on digital sustainability (e.g. using dark mode to save energy, shutting down idle computers, deleting unused cloud data/emails, eco-friendly physical habits, reducing e-waste, recycling electronics).\n"
+                                "2. Explain the features and structure of this Quiz Portal app. We offer beautiful glassmorphic quizzes in HTML, CSS, JavaScript, Python, and Django, as well as leaderboards, dashboard tracking, and history logs.\n"
+                                "3. CRITICAL: NEVER give answers, solutions, correct options, or code blocks that solve specific quiz questions! If the user asks for quiz answers or tries to cheat, you must strictly and politely decline. Tell them you are here to teach them about green habits and our app features, not to solve the exam for them!\n"
+                                "Keep your answers friendly, robotic, interactive, clean, structured, and use emojis."
+                            )
+                        }
+                    ]
+                },
+                "generationConfig": {
+                    "maxOutputTokens": 450,
+                    "temperature": 0.7
+                }
+            }
+            response = requests.post(url, json=payload, headers=headers, timeout=10)
+            if response.status_code == 200:
+                res_data = response.json()
+                bot_text = res_data['candidates'][0]['content']['parts'][0]['text']
+                return JsonResponse({"response": bot_text})
+        except Exception as e:
+            pass # Fall back to rule-based engine on any error
+
+    # 3. Fallback Engine (Robotic, helpful, eco-focused)
+    eco_keywords = ["eco", "green", "carbon", "environment", "nature", "earth", "save", "power", "energy", "planet", "recycle", "sustainable"]
+    app_keywords = ["app", "quiz", "portal", "play", "features", "how", "what is", "about", "leaderboard", "history", "dashboard"]
+
+    if any(kw in message_lower for kw in eco_keywords):
+        fallback_res = (
+            "🤖 **Beep Boop! Eco-Advisor Protocol Activated!** 🌿\n\n"
+            "I'd love to help you protect our planet! Here are some excellent digital and physical eco-friendly practices:\n\n"
+            "• 🔋 **Use Dark Mode**: Darker themes consume less power on modern displays. Our Quiz Portal features a premium dark theme to help reduce energy consumption!\n"
+            "• 📧 **Digital Spring Cleaning**: Delete old emails, messages, and unused cloud files. Reducing data center storage demands saves massive amounts of electricity globally!\n"
+            "• 🔌 **Power Off**: Fully shut down your devices when done. Putting them on sleep mode still draws 'phantom' standby power.\n"
+            "• ♻️ **Recycle E-waste**: Don't throw old phones or laptops in the trash. Dispose of them at certified e-waste facilities so valuable materials can be recycled.\n\n"
+            "What other green tips would you like to explore? 🌎"
+        )
+    elif any(kw in message_lower for kw in app_keywords):
+        fallback_res = (
+            "🤖 **Affirmative! Accessing Quiz Portal Database...** ⚡\n\n"
+            "Here is a complete breakdown of our application features:\n\n"
+            "• 📝 **Quizzes**: We offer customizable real-time quizzes covering HTML5, CSS Flexbox, JavaScript ES6, Python, and Django.\n"
+            "• ⏱️ **Timer**: Every quiz has an elegant floating real-time countdown timer to help you build speed!\n"
+            "• 🏆 **Leaderboard**: Compete with other learners globally and view rank updates in real-time.\n"
+            "• 📊 **History & Dashboard**: View your past scores, percentages, and performance graphs to track your learning journey.\n"
+            "• 🌐 **Multilingual**: Switch languages easily using the top bar dropdown.\n\n"
+            "Head to the **Quizzes** tab in the navbar to start a challenge! 🚀"
+        )
+    else:
+        fallback_res = (
+            "🤖 **Greetings, human! I am your AI Robot Mentor!** 🤖\n\n"
+            "I am programmed to guide you through the **Quiz Portal** and help you develop **eco-friendly digital habits**! 🌿\n\n"
+            "Ask me things like:\n"
+            "• *'How can I save energy?'*\n"
+            "• *'Tell me about the app features!'*\n\n"
+            "*(Remember, I cannot help with quiz answers to keep the leaderboard fair and fun!)*"
+        )
+
+    return JsonResponse({"response": fallback_res})
 
 
 

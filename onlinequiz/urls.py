@@ -54,6 +54,7 @@ urlpatterns = [
     ),
     
 
+  path('ai-guidance/', m_v.ai_guidance, name='ai_guidance'),
   path('logout/', m_v.logout_view, name='logout'),
   path(
         'quiz/<int:id>/',

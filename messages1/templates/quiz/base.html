@@ -94,6 +94,31 @@
             box-shadow: 0 4px 30px rgba(0,0,0,0.15);
             padding: 16px 24px;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 1030 !important;
+        }
+
+        .dropdown-menu {
+            z-index: 1060 !important;
+        }
+
+        .lang-badge {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #60a5fa !important;
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .dropdown-item:hover .lang-badge {
+            background: rgba(96, 165, 250, 0.25);
+            border-color: rgba(96, 165, 250, 0.5);
+            color: #ffffff !important;
         }
 
         .navbar-brand {
@@ -344,6 +369,266 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.2);
         }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* AI Chatbot Styles */
+        .ai-chat-launcher {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: launcherPulse 3s infinite alternate;
+        }
+
+        .ai-chat-launcher:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 12px 40px 0 rgba(16, 185, 129, 0.6);
+        }
+
+        @keyframes launcherPulse {
+            0% { box-shadow: 0 8px 24px 0 rgba(16, 185, 129, 0.4); }
+            100% { box-shadow: 0 8px 36px 8px rgba(16, 185, 129, 0.6); }
+        }
+
+        .ai-chat-window {
+            position: fixed;
+            bottom: 105px;
+            right: 30px;
+            width: 380px;
+            height: 520px;
+            border-radius: 24px;
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: var(--glass-shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9998;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .ai-chat-window.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        .ai-chat-header {
+            padding: 20px;
+            background: rgba(8, 12, 26, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-chat-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #ffffff;
+        }
+
+        .ai-chat-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            display: inline-block;
+        }
+
+        .ai-chat-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .ai-chat-close:hover {
+            color: #ef4444;
+        }
+
+        .ai-chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: bubbleAppear 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes bubbleAppear {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.bot {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.bot p {
+            margin-bottom: 8px;
+        }
+        .chat-message.bot p:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-chat-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 20px 15px;
+            background: transparent;
+        }
+
+        .chat-chip {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chat-chip:hover {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            transform: translateY(-1px);
+        }
+
+        .ai-chat-footer {
+            padding: 15px 20px;
+            background: rgba(8, 12, 26, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .ai-chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 10px 15px;
+            color: #ffffff !important;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .ai-chat-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+            outline: none;
+        }
+
+        .ai-chat-send {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ai-chat-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 4px 8px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        .typing-dot:nth-child(3) { animation-delay: -0.08s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        @media (max-width: 576px) {
+            .ai-chat-window {
+                bottom: 0;
+                right: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+            }
+            .ai-chat-launcher {
+                bottom: 15px;
+                right: 15px;
+            }
+        }
     </style>
 </head>
 
@@ -407,11 +692,11 @@
                         🌐 <span id="currentLangLabel">English</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="languageSelectorBtn" style="background: rgba(15,23,42,0.95); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);">
-                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">🇺🇸 English</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('es')">🇪🇸 Español</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('hi')">🇮🇳 हिन्दी</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('te')">🇮🇳 తెలుగు</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('de')">🇩🇪 Deutsch</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="#" onclick="changeLanguage('en')"><span class="lang-badge">EN</span> English</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="#" onclick="changeLanguage('es')"><span class="lang-badge">ES</span> Español</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="#" onclick="changeLanguage('hi')"><span class="lang-badge">HI</span> हिन्दी</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="#" onclick="changeLanguage('te')"><span class="lang-badge">TE</span> తెలుగు</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="#" onclick="changeLanguage('de')"><span class="lang-badge">DE</span> Deutsch</a></li>
                     </ul>
                 </div>
 
@@ -502,12 +787,48 @@
     </div>
 </footer>
 
-<!-- Bootstrap JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Floating Glassmorphic AI Chatbot Widget -->
+<div class="ai-chat-launcher" id="aiChatLauncher" onclick="toggleAIChat()">
+    🤖
+</div>
 
-<script>
-    // Global Translation System
-    const translations = {
+<div class="ai-chat-window" id="aiChatWindow">
+    <!-- Header -->
+    <div class="ai-chat-header">
+        <div class="ai-chat-title">
+            <span class="ai-chat-status"></span>
+            <span id="aiWidgetTitle" data-translate="ai_widget_title">🤖 Eco-Advisor Robot</span>
+        </div>
+        <button class="ai-chat-close" onclick="toggleAIChat()">&times;</button>
+    </div>
+
+    <!-- Body / Conversation History -->
+    <div class="ai-chat-body" id="aiChatBody">
+        <div class="chat-message bot">
+            <p id="aiWidgetWelcome" data-translate="ai_widget_welcome">🤖 <b>Beep Boop! Hello human friend!</b></p>
+            <p id="aiWidgetWelcomeSub" data-translate="ai_widget_welcome_sub">I am your AI Robot Mentor and Eco-Advisor. Ask me how to save energy, reduce your digital carbon footprint, or learn more about the Quiz Portal app! (Note: I am strictly forbidden from giving quiz answers!)</p>
+        </div>
+    </div>
+
+    <!-- Quick Chips -->
+    <div class="ai-chat-chips" id="aiChatChips">
+        <span class="chat-chip" onclick="sendQuickPrompt('🌱 How can I save energy?')">🌱 Eco-Tips</span>
+        <span class="chat-chip" onclick="sendQuickPrompt('⚡ What is Quiz Portal?')">⚡ About App</span>
+        <span class="chat-chip" onclick="sendQuickPrompt('🏆 How can I play quizzes?')">🏆 How to Play</span>
+        <span class="chat-chip" onclick="sendQuickPrompt('🌎 What is digital carbon footprint?')">🌎 Digital Footprint</span>
+    </div>
+
+    <!-- Footer Input Bar -->
+    <div class="ai-chat-footer">
+        <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Ask about eco-friendly tips or app..." onkeypress="handleChatKeyPress(event)">
+        <button class="ai-chat-send" id="aiChatSendBtn" onclick="sendChatMessage()">
+            📤
+        </button>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/boo    const translations = {
         en: {
             "home": "Home",
             "quizzes": "Quizzes",
@@ -539,7 +860,12 @@
             "questions_label": "📋 Questions",
             "submit_btn": "✅ Submit My Quiz Answers",
             "time_remaining": "⏱️ Time Remaining",
-            "min": "Min"
+            "min": "Min",
+
+            // AI Widget
+            "ai_widget_title": "🤖 Eco-Advisor Robot",
+            "ai_widget_welcome": "🤖 <b>Beep Boop! Hello human friend!</b>",
+            "ai_widget_welcome_sub": "I am your AI Robot Mentor and Eco-Advisor. Ask me how to save energy, reduce your digital carbon footprint, or learn more about the Quiz Portal app! (Note: I am strictly forbidden from giving quiz answers!)"
         },
         es: {
             "home": "Inicio",
@@ -570,7 +896,12 @@
             "questions_label": "📋 Preguntas",
             "submit_btn": "✅ Enviar mis respuestas",
             "time_remaining": "⏱️ Tiempo restante",
-            "min": "Min"
+            "min": "Min",
+
+            // AI Widget
+            "ai_widget_title": "🤖 Robot Asesor Ecológico",
+            "ai_widget_welcome": "🤖 <b>¡Beep Boop! ¡Hola amigo humano!</b>",
+            "ai_widget_welcome_sub": "Soy tu mentor robot de IA y asesor ecológico. ¡Pregúntame cómo ahorrar energía, reducir tu huella de carbono digital o aprender más sobre la aplicación Quiz Portal! (Nota: ¡Tengo estrictamente prohibido dar respuestas de cuestionarios!)"
         },
         hi: {
             "home": "होम",
@@ -601,7 +932,12 @@
             "questions_label": "📋 प्रश्न",
             "submit_btn": "✅ उत्तर सबमिट करें",
             "time_remaining": "⏱️ बचा हुआ समय",
-            "min": "मिनट"
+            "min": "मिनट",
+
+            // AI Widget
+            "ai_widget_title": "🤖 एआई इको-एडवाइजर रोबोट",
+            "ai_widget_welcome": "🤖 <b>बीप बूप! नमस्ते मानव मित्र!</b>",
+            "ai_widget_welcome_sub": "मैं आपका एआई रोबोट मेंटर और इको-एडवाइजर हूँ। मुझसे पूछें कि ऊर्जा कैसे बचाएं, अपने डिजिटल कार्बन फुटप्रिंट को कैसे कम करें, या क्विज़ पोर्टल ऐप के बारे में अधिक जानें! (नोट: मुझे क्विज़ के उत्तर देने की सख्त मनाही है!)"
         },
         te: {
             "home": "హోమ్",
@@ -619,13 +955,63 @@
             "ai_title": "🤖 AI మెంటార్ & గైడ్",
             "ai_subtitle": "పరీక్షలో విజయం సాధించడానికి ఇక్కడ కొన్ని మార్గదర్శకాలు ఉన్నాయి:",
             "ai_dos": "✅ చేయవలసినవి (Dos):",
-            "ai_do1": "సమాధానాన్ని ఎంచుకునే ముందు ప్రతి ప్రశ్నను జాగ్రత్తగా చదవండి.",
+            "ai_do1": "సమాధానాన్ని ఎంచుకునే ముందు ప్రతి ప్రశ్నను జాగ్రತ್ತగా చదవండి.",
             "ai_do2": "కౌంట్‌డౌన్ టైమర్‌ను గమనిస్తూ ఉండండి.",
             "ai_do3": "అన్ని ప్రశ్నలకు సమాధానం ఇవ్వండి; నెగటివ్ మార్కులు లేవు.",
             "ai_donts": "❌ చేయకూడనివి (Don'ts):",
             "ai_dont1": "పేజీని రీఫ్రెష్ చేయవద్దు, అలా చేస్తే మీ సమాచారం పోతుంది.",
             "ai_dont2": "ట్యాబ్‌లను మార్చవద్దు లేదా బ్రౌజర్‌ను మినిమైజ్ చేయవద్దు.",
-            "ai_dont3": "ఆన్‌లైన్‌లో సమాధానాల కోసం శోధించవద్దు.",
+            "ai_dont3": "ఆన్‌లైన్ లో సమాధానాల కోసం శోధించవద్దు.",
+            "ai_button": "💡 AI మెంటార్ సలహా అడగండి",
+            
+            "limit_label": "⏱️ పరిమితి",
+            "questions_label": "📋 ప్రశ్నలు",
+            "submit_btn": "✅ సమాధానాలను సమర్పించండి",
+            "time_remaining": "మిగిలిన సమయం",
+            "min": "నిమిషాలు",
+
+            // AI Widget
+            "ai_widget_title": "🤖 AI ఎకో-అడ్వైజర్ రోబోట్",
+            "ai_widget_welcome": "🤖 <b>బీప్ బూప్! హలో మానవ మిత్రమా!</b>",
+            "ai_widget_welcome_sub": "నేను మీ AI రోబోట్ మెంటార్ మరియు ఎకో-అడ్వైజర్. శక్తిని ఎలా ఆదా చేయాలో, మీ డిజిటల్ కార్బన్ పాదముద్రను ఎలా తగ్గించుకోవాlo లేదా క్విజ్ పోర్టల్ యాప్ గురించి మరింత తెలుసుకోవాlo నన్ను అడగండి! (గమనిక: క్విజ్ సమాధానాలు ఇవ్వడం నాకు ఖచ్చితంగా నిషేధించబడింది!)"
+        },
+        de: {
+            "home": "Startseite",
+            "quizzes": "Quizze",
+            "leaderboard": "Bestenliste",
+            "static_quiz": "Statisches Quiz",
+            "dashboard": "Dashboard",
+            "history": "Verlauf",
+            "logout": "Abmelden",
+            "login": "Anmelden",
+            "register": "Registrieren",
+            "welcome": "Willkommen",
+            "lang_label": "Deutsch",
+            
+            "ai_title": "🤖 KI-Mentor & Leitfaden",
+            "ai_subtitle": "Hier sind Ihre Anweisungen für eine erfolgreiche Prüfung:",
+            "ai_dos": "✅ Was Sie TUN sollten:",
+            "ai_do1": "Lesen Sie jede Frage sorgfältig durch, bevor Sie eine Antwort wählen.",
+            "ai_do2": "Behalten Sie den ablaufenden Timer im Auge.",
+            "ai_do3": "Beantworten Sie alle Fragen; es gibt keinen Punktabzug bei Fehlern.",
+            "ai_donts": "❌ Was Sie NICHT TUN sollten:",
+            "ai_dont1": "Laden Sie die Seite nicht neu, da sonst Ihr Fortschritt verloren geht.",
+            "ai_dont2": "Wechseln Sie nicht den Tab und minimieren Sie nicht das Browserfenster.",
+            "ai_dont3": "Suchen Sie nicht im Internet nach den Antworten.",
+            "ai_button": "💡 KI-Mentor nach Rat fragen",
+            
+            "limit_label": "⏱️ Zeitlimit",
+            "questions_label": "📋 Fragen",
+            "submit_btn": "✅ Meine Antworten absenden",
+            "time_remaining": "⏱️ Verbleibende Zeit",
+            "min": "Min",
+
+            // AI Widget
+            "ai_widget_title": "🤖 Öko-Berater Roboter",
+            "ai_widget_welcome": "🤖 <b>Beep Boop! Hallo Menschenfreund!</b>",
+            "ai_widget_welcome_sub": "Ich bin dein KI-Roboter-Mentor und Öko-Berater. Frage mich, wie du Energie sparen, deinen digitalen CO2-Fußabdruck reduzieren oder mehr über die Quiz Portal-App erfahren kannst! (Hinweis: Es ist mir strengstens untersagt, Quiz-Antworten zu geben!)"
+        }
+    };��‌లో సమాధానాల కోసం శోధించవద్దు.",
             "ai_button": "💡 AI మెంటార్ సలహా అడగండి",
             
             "limit_label": "⏱️ పరిమితి",
