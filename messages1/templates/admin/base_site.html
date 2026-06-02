@@ -1,0 +1,305 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<div id="branding">
+    <h1 id="site-name">
+        <a href="{% url 'admin:index' %}">
+            ⚡ QuizPortal Admin
+        </a>
+    </h1>
+</div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Custom Admin Glassmorphism Theme */
+
+    :root {
+        --primary: #3b82f6;
+        --primary-fg: #ffffff;
+        --accent: #a855f7;
+        --body-bg: #060913;
+        --body-fg: #f8fafc;
+        --border-color: rgba(255, 255, 255, 0.08);
+        --glass-bg: rgba(15, 23, 42, 0.65);
+        --glass-blur: blur(16px);
+        --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+    }
+
+    /* Background gradient matching main app */
+    body {
+        background: radial-gradient(circle at 50% 50%, #0d1326 0%, #060913 100%) !important;
+        color: var(--text-primary) !important;
+        font-family: 'Outfit', 'Inter', sans-serif !important;
+    }
+
+    /* Header styling */
+    #header {
+        background: rgba(8, 12, 26, 0.7) !important;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border-bottom: 1px solid var(--border-color);
+        padding: 15px 20px !important;
+    }
+
+    #header a {
+        color: var(--text-secondary) !important;
+    }
+
+    #header a:hover {
+        color: #60a5fa !important;
+    }
+
+    #branding h1 {
+        font-weight: 800;
+        font-size: 1.5rem;
+        background: linear-gradient(135deg, #60a5fa, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0;
+        display: inline-block;
+    }
+
+    #user-tools {
+        color: var(--text-muted) !important;
+    }
+
+    #user-tools a {
+        color: #60a5fa !important;
+    }
+
+    /* Breadcrumbs bar */
+    .breadcrumbs {
+        background: rgba(255, 255, 255, 0.02) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        color: var(--text-muted) !important;
+        padding: 10px 40px !important;
+    }
+
+    .breadcrumbs a {
+        color: #60a5fa !important;
+    }
+
+    .breadcrumbs a:hover {
+        text-decoration: underline;
+    }
+
+    /* Main containers / panels */
+    .module {
+        background: var(--glass-bg) !important;
+        backdrop-filter: var(--glass-blur) !important;
+        -webkit-backdrop-filter: var(--glass-blur) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 16px !important;
+        box-shadow: var(--glass-shadow) !important;
+        margin-bottom: 30px !important;
+        overflow: hidden;
+    }
+
+    .module h2, .module caption {
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: #93c5fd !important;
+        font-weight: 700 !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        padding: 12px 15px !important;
+        font-size: 1rem !important;
+        margin: 0 !important;
+    }
+
+    /* Tables and Rows */
+    table {
+        background: transparent !important;
+        width: 100% !important;
+    }
+
+    thead th {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: var(--text-primary) !important;
+        border-bottom: 2px solid var(--border-color) !important;
+        font-weight: 600 !important;
+    }
+
+    tr.row1, tr.row2 {
+        background: transparent !important;
+        transition: background 0.2s ease;
+    }
+
+    tr.row1:hover, tr.row2:hover {
+        background: rgba(255, 255, 255, 0.03) !important;
+    }
+
+    td, th {
+        border-bottom: 1px solid var(--border-color) !important;
+        color: var(--text-secondary) !important;
+        padding: 12px 15px !important;
+    }
+
+    th a {
+        color: var(--text-primary) !important;
+    }
+
+    /* Form inputs & details */
+    input[type=text], input[type=password], select, textarea, .vTextField {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--text-primary) !important;
+        border-radius: 8px !important;
+        padding: 10px 12px !important;
+        transition: all 0.3s ease;
+    }
+
+    input[type=text]:focus, input[type=password]:focus, select:focus, textarea:focus {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: #60a5fa !important;
+        box-shadow: 0 0 10px rgba(96, 165, 250, 0.25) !important;
+        outline: none !important;
+    }
+
+    .help, .help-block {
+        color: var(--text-muted) !important;
+    }
+
+    /* Submit bar & buttons */
+    .submit-row {
+        background: rgba(8, 12, 26, 0.7) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 12px !important;
+        padding: 15px !important;
+    }
+
+    /* Buttons */
+    .button, input[type=submit], input[type=button], .submit-row a.deletelink {
+        border-radius: 8px !important;
+        padding: 10px 20px !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease !important;
+        text-transform: none !important;
+    }
+
+    /* Primary buttons (Save, Search, dynamic save) */
+    .button.default, input[name=_save], input[type=submit].default {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8)) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+    }
+
+    .button.default:hover, input[name=_save]:hover, input[type=submit].default:hover {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(147, 51, 234, 0.95)) !important;
+        box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3) !important;
+        transform: translateY(-1px);
+    }
+
+    /* Secondary buttons */
+    .button, input[type=submit], input[type=button] {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: #ffffff !important;
+    }
+
+    /* Delete link */
+    .submit-row a.deletelink {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.7), rgba(220, 38, 38, 0.7)) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        text-decoration: none !important;
+    }
+
+    .submit-row a.deletelink:hover {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9)) !important;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important;
+    }
+
+    /* Sidebar and filtering */
+    #changelist {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    #changelist-form {
+        flex-grow: 1;
+    }
+
+    #changelist-filter {
+        background: var(--glass-bg) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 12px !important;
+        width: 240px !important;
+        margin: 0 !important;
+    }
+
+    #changelist-filter h2 {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: var(--text-primary) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        padding: 10px 15px !important;
+        margin: 0 !important;
+    }
+
+    #changelist-filter ul {
+        border-bottom: 1px solid var(--border-color) !important;
+        padding-bottom: 10px !important;
+    }
+
+    #changelist-filter li a {
+        color: var(--text-secondary) !important;
+    }
+
+    #changelist-filter li.selected a {
+        color: #60a5fa !important;
+        font-weight: 700 !important;
+    }
+
+    /* Content Title & Actions */
+    #content h1 {
+        font-size: 1.8rem !important;
+        font-weight: 800 !important;
+        color: var(--text-primary) !important;
+        margin-bottom: 25px !important;
+    }
+
+    .object-tools a {
+        background: #60a5fa !important;
+        color: #060913 !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+        padding: 8px 15px !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .object-tools a:hover {
+        background: #93c5fd !important;
+        transform: translateY(-1px);
+    }
+
+    /* Scrollbar customization */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #060913;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+</style>
+{% endblock %}
